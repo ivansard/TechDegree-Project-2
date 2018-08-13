@@ -72,7 +72,7 @@ prependAndStyleSearchbar();
 //Function that will only show students which are contained in the filteredArray
 function showFilteredArrayElements(wholeArray, filteredArray){
   for (var i = 0; i < wholeArray.length; i++) {
-    if(filteredArray.contains(wholeArray[i])){
+    if(filteredArray.includes(wholeArray[i])){
       wholeArray[i].style.display = 'block';
     } else {
       wholeArray[i].style.display = 'none';
