@@ -99,12 +99,14 @@ body{
   margin: 40px 0 0 0;
   text-align: center;
 }
- 
-  .pagination li{
+
+  .pagination-div li{
     display: inline;
+    text-align: center;
+    float: left;
   }
 
-    .pagination li a{
+    .pagination-div li a{
       border: 1px solid #eaeaea;
       border-radius: 5px;
       padding: 3px 8px;
@@ -112,8 +114,8 @@ body{
       color: #4ba6c3;
     }
 
-    .pagination li a.active,
-    .pagination li a:hover{
+    .pagination-div li a.active,
+    .pagination-div li a:hover{
       background-color: #4ba6c3;
       color: #fff;
     }

@@ -5,17 +5,54 @@ FSJS project 2 - List Filter and Pagination
 
 // Add variables that store DOM elements you will need to reference and/or manipulate
 
-const $allStudents = $('.student-item');
-const $pagination = $("<div class = pagination></div>");
-const $searchBar = $("<div class = searchBar> <input type='text' id ='searchInput' placeholder = 'Student search...'  </div>");
-const $allStudentDetails = $(".student-details");
-const $allStudentNames = $(".student-details h3");
-const $studentList = $('.student-list');
+//JQuery
+// const $allStudents = $('.student-item');
+// const $pagination = $(`<div class = pagination>
+//                          <ul class = paginationLinks> </ul>
+//                         </div`);
+// const $searchBar = $("<div class = searchBar> <input type='text' id ='searchInput' placeholder = 'Student search...'>  </div>");
+// const $allStudentDetails = $(".student-details");
+// const $allStudentNames = $(".student-details h3");
+// const $studentList = $('.student-list');
+// const $filteredStudentList = $('.student-item');
+
+//Vanilla JS
+// Variables concerning students
+const allStudentListItems = document.querySelectorAll('.student-item');
+const allStudentDetails = document.querySelectorAll(".student-details");
+const allStudentNames = document.querySelectorAll(".student-details h3");
+const studentListUL = document.querySelector('.student-list');
+
+//Variables concerning pagination
+const pagination = document.createElement('div');
+pagination.className = 'pagination-div';
+const paginationLinksList = document.createElement('ul');
+paginationLinksList.className = 'pagination-links-ul';
+pagination.appendChild(paginationLinksList);
+document.querySelector('.page').append(pagination);
+
+
+//Variables converning searchbar
+const searchBarDiv = document.createElement('div');
+searchBarDiv.className = 'searchbar-div';
+const searchBar = document.createElement('input');
+searchBar.type = 'text';
+searchBar.id = 'searchInput';
+searchBar.placeholder = 'Student search..'
+searchBarDiv.append(searchBar);
+
+//Appending a message heading to show the message if there are no search results
+
+const messageHeading =  document.createElement('h3');
+$('.page-header h2').prepend(messageHeading);
 
 // Create a function to hide all of the items in the list excpet for the ten you want to show
 // Tip: Keep in mind that with a list of 54 studetns, the last page will only display four
 
 function showSelectedTenItems(index, itemArray){
+
+  //Based on the button which is clicked (1-6), while looping through, only items
+  //whose indexes are in the specified interval will be shown, others hidden
   for (var i = 0; i < itemArray.length; i++) {
     if(i >=  parseInt(index - 1) * 10 && i < (parseInt(index)) * 10){
       itemArray[i].style.display = 'block';
@@ -25,41 +62,66 @@ function showSelectedTenItems(index, itemArray){
   }
 }
 
+// Showing only the first 10 items of the student list initially
+showSelectedTenItems(1, allStudentListItems);
+
 // Create and append the pagination links - Creating a function that can do this is a good approach
 
 function createPagniationLinks(itemArray){
-  $pagination.addClass('paginationLinks');
-  const $paginationLinks = $("<ul class = 'paginationLinks'></ul>");
-  let numberOfLinks = 1;
-  for (var i = 0; i < itemArray.length; i+=10) {
-    let $paginationLink = $(`<li>
-                            <a href = '#' class = 'filter'> ${numberOfLinks} </a>
-                            </li>`);
-    $paginationLinks.append($paginationLink);
-    numberOfLinks++;
+  let numberOfLink = 1;
+  for (let i = 0; i < itemArray.length; i+=10) {
+    //Creating the li and a elements needed for a single pagination button
+    let paginationButton = document.createElement('li');
+    let paginationLink = document.createElement('a');
+    paginationLink.href = '#';
+    paginationLink.className = 'pagination-link';
+    paginationLink.text = numberOfLink;
+
+    //Appending the link to the button, and the button to the ul
+    paginationButton.appendChild(paginationLink);
+    paginationLinksList.appendChild(paginationButton);
+    numberOfLink++;
   }
-  $pagination.append($paginationLinks);
-  $('body').append($pagination);
+  //Adding event listener to all links. This is done here, because when the
+  //links are removed, so are their previous event handlers, and hence they must be added again
+  addEventListenerToLinks();
 }
 
-createPagniationLinks($allStudents);
 
 
 // Add functionality to the pagination buttons so that they show and hide the correct items
 // Tip: If you created a function above to show/hide list items, it could be helpful here
 
+//Function which adds the event listener to the newly created pagination links
 
-$('.filter').on('click', function(){
-  console.log($(this).text());
-  showSelectedTenItems($(this).text(), $allStudents);
-});
+function addEventListenerToLinks(){
+  $('.pagination-link').on('click', function(){
+    const currentSearch = returnFilteredArrayOfStudents();
+    showSelectedTenItems($(this).text(), currentSearch);
+  });
+}
+
+//Function which removes all pagination links currently on the page
+
+function removePaginationLinks(){
+  while(paginationLinksList.firstChild){
+    paginationLinksList.removeChild(paginationLinksList.firstChild);
+  }
+}
+
+// Creating initial pagination links based on the whole student list
+createPagniationLinks(allStudentListItems);
+
 
 //Adding the search bar at the top of the page
 
 function prependAndStyleSearchbar(){
-  $('body').prepend($searchBar);
+  $('body').prepend(searchBarDiv);
   $('#searchInput').css({
-    margin: 4% 40% 0,
+    marginTop: 32,
+    marginLeft: 350,
+    marginRight: 200,
+    marginBottom:  0,
     fontSize: 30,
     fontWeight: 'bold',
     color : '#555',
@@ -72,7 +134,7 @@ prependAndStyleSearchbar();
 //Function that will only show students which are contained in the filteredArray
 function showFilteredArrayElements(wholeArray, filteredArray){
   for (var i = 0; i < wholeArray.length; i++) {
-    if(filteredArray.includes(wholeArray[i])){
+    if(filteredArray.index(wholeArray[i]) > -1){
       wholeArray[i].style.display = 'block';
     } else {
       wholeArray[i].style.display = 'none';
@@ -80,25 +142,60 @@ function showFilteredArrayElements(wholeArray, filteredArray){
   }
 }
 
+
+function returnFilteredArrayOfStudents(){
+
+  //Based on the value in the search, return all students whose names
+  //match the search criteria in an array
+
+    const $inputValue = $('#searchInput').val();
+    const filteredStudents = [];
+
+    for (var i = 0; i < allStudentNames.length; i++) {
+      if(allStudentNames[i].textContent.includes($inputValue)){
+        filteredStudents.push(allStudentNames[i].parentElement.parentElement);
+      }
+    }
+
+    return filteredStudents;
+}
+
+
 //Adding functionality to the search input field
+//Event listener for search input
 
 $('#searchInput').on('input', function(){
-  //Create a new array who fit the search criteria
-  const $filteredArray = [];
+
+  //Getting the search input value
   const $inputValue = $('#searchInput').val();
 
-  $allStudentNames.each( (index, element) => {
-    $name = $(element).text();
-    if($name.includes($inputValue)){
-      $filteredArray.push($(element).parent().parent())
+  //Loop through all students
+  //Find the ones whose names matches the search criteria and show them
+  //Hide the others
+
+  for (var i = 0; i < allStudentNames.length; i++) {
+    if(allStudentNames[i].textContent.includes($inputValue)){
+      allStudentNames[i].parentElement.parentElement.style.display = 'block';
+    } else {
+      allStudentNames[i].parentElement.parentElement.style.display = 'none';;
     }
-  })
-  //Erase the old pagination numberOfLinks
-  $pagination.html('');
-  // Set the html of the pagination to the filtered students
-  showFilteredArrayElements($allStudents, $filteredArray)
+  }
+
+  //Storing the filtered array of students into a variable
+  const filteredStudents = returnFilteredArrayOfStudents();
+
+
+  //If there are no results based on serach, display the adequate message in the message heading
+  if(filteredStudents.length === 0){
+    messageHeading.textContent = 'Sorry, but no results match your search';
+  } else {
+    messageHeading.textContent = '';
+  }
+
+  //Removing the pagination created by default or based on previous search
+  removePaginationLinks();
   //Display the first 10 students of the search
-  showSelectedTenItems(0, $filteredArray);
+  showSelectedTenItems(1, filteredStudents);
   //Based on that new array generate the adequate pagination links
-  createPagniationLinks($filteredArray);
+  createPagniationLinks(filteredStudents);
 });
