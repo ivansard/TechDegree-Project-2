@@ -103,7 +103,6 @@ body{
   .pagination-div li{
     display: inline;
     text-align: center;
-    float: left;
   }
 
     .pagination-div li a{

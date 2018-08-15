@@ -69,6 +69,7 @@ showSelectedTenItems(1, allStudentListItems);
 
 function createPagniationLinks(itemArray){
   let numberOfLink = 1;
+    //For 10 items we need one pagination button
   for (let i = 0; i < itemArray.length; i+=10) {
     //Creating the li and a elements needed for a single pagination button
     let paginationButton = document.createElement('li');
