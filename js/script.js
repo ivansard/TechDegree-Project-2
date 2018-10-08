@@ -32,13 +32,13 @@ pagination.appendChild(paginationLinksList);
 document.querySelector('.page').append(pagination);
 
 
-//Variables converning searchbar
+//Variables concerning searchbar
 const searchBarDiv = document.createElement('div');
 searchBarDiv.className = 'searchbar-div';
 const searchBar = document.createElement('input');
 searchBar.type = 'text';
 searchBar.id = 'searchInput';
-searchBar.placeholder = 'Student search..'
+searchBar.placeholder = 'Student search..';
 searchBarDiv.append(searchBar);
 
 //Appending a message heading to show the message if there are no search results
@@ -52,7 +52,7 @@ $('.page-header h2').prepend(messageHeading);
 function showSelectedTenItems(index, itemArray){
 
   //Based on the button which is clicked (1-6), while looping through, only items
-  //whose indexes are in the specified interval will be shown, others hidden
+  //whose ies are in the specified interval will be shown, others hidden
   for (var i = 0; i < itemArray.length; i++) {
     if(i >=  parseInt(index - 1) * 10 && i < (parseInt(index)) * 10){
       itemArray[i].style.display = 'block';
@@ -126,7 +126,7 @@ function prependAndStyleSearchbar(){
     fontSize: 30,
     fontWeight: 'bold',
     color : '#555',
-    border: 'none'
+    border: '2px solid grey'
   })
 }
 
@@ -160,6 +160,20 @@ function returnFilteredArrayOfStudents(){
 
     return filteredStudents;
 }
+
+//Capitalizing students name adequately
+function capitalizeStudentsNames(){
+  const studentNames = document.querySelectorAll('.student-details h3');
+  for (let i = 0; i < studentNames.length; i++) {
+    const studentName = studentNames[i].textContent;
+    const capitalizedStudentName = studentName.split(' ').map((word) => {
+      return word[0].toUpperCase() + word.substring(1);
+    }).join(' ')
+    studentNames[i].textContent = capitalizedStudentName;  
+  }
+}
+
+capitalizeStudentsNames();
 
 
 //Adding functionality to the search input field

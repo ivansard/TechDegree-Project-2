@@ -4,12 +4,22 @@ body{
   color: #222;
 }
 
+  #searchInput{
+      margin: 32px 200px 0px 350px;
+      font-size: 30px;
+      font-weight: bold;
+      color: rgb(85, 85, 85);
+      border: 2px solid gray;
+      border-radius: 5px;
+  }
+
 .page{
   margin: 50px auto;
   width: 70%;
   background-color: #fff;
   border-radius: 5px;
   padding: 50px;
+  border: 2px solid gray;
 }
 
 .page-header{
@@ -43,7 +53,7 @@ body{
       color: #fff
     }
 
-.student-list{}
+
 
   .student-item{
     margin: 0 0 20px 0;
